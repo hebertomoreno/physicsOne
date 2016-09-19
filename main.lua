@@ -1,5 +1,6 @@
 width = 800
 height = 800
+jumpForce = 12000
 
 p = love.physics
 g = love.graphics
@@ -9,12 +10,32 @@ o = objects
 
 moveaug = 4
 
+function createPlayer()
+	--Create the Player
+	o.player = {}
+		o.player.body = p.newBody(world, width/2, height/2, "dynamic")
+		o.player.body:setMass(15)
+		o.player.shape = p.newRectangleShape(24,60)
+		o.player.fixture = p.newFixture(o.player.body, o.player.shape) --attach body to shape with a density of one (body, shape, density)
+		o.player.fixture:setRestitution(0) --A small restitution means less bouncing
+		o.player.body:setFixedRotation(true) --no rotating
+		o.player.jumping = false --will help us find out if our player is jumop
+		o.player.fixture:setUserData("Player") --Give our object a name
+end
+function createGround()
+	--create the Ground
+	o.ground = {}
+		o.ground.body = p.newBody(world, width/2, height-50/2, "static")--remember, the shape (the rectangle we create next) anchors to the body from its center, so we have to move it to (650/2, 650-50/2)
+		o.ground.shape = p.newRectangleShape(width*2,50) --(width, height)
+		o.ground.fixture = p.newFixture(o.ground.body, o.ground.shape)--Attach shape to body
+		o.ground.fixture:setUserData("Ground")
+end
 function generatePlatforms()
 	--We will use six platforms
-	o.platforms = {{},{},{},{},{},{}}
+	o.platforms = {{15},{3}}
 	math.randomseed(os.time())
 
-	for i = 1, 6, 1 do
+	for i = 1, 15, 1 do
 		local x = math.random(50,width-50)
 		local dynoWidth = math.random(50, 300)
 		--local y = math.random(50, height-100)
@@ -29,7 +50,14 @@ function love.load()
 	--Create World
 	p.setMeter(64) --The height of a meter in our world is 64px
 	world = p.newWorld(0,9.81*p.getMeter(),true)--(gravity on the x axis, gravity on the y axis, whether the bodies are allowed to sleep)
-	
+		
+		--set the callbacks for collision detection
+		--beginContact gets called when two fixtures start overlapping (two objects collide).
+		--endContact gets called when two fixtures stop overlapping (two objects disconnect).
+		--preSolve is called just before a frame is resolved for a current collision
+		--postSolve is called just after a frame is resolved for a current collision.
+		world:setCallbacks(beginContact, endContact, preSolve, postSolve)
+
 	--Set the image for the sprite
 	image = g.newImage("robot.png")
 
@@ -40,24 +68,8 @@ function love.load()
 
 	--Add bodies, shapes and fixture
 	o = {}
-
-	--create the Ground
-	o.ground = {}
-		o.ground.body = p.newBody(world, width/2, height-50/2, "static")--remember, the shape (the rectangle we create next) anchors to the body from its center, so we have to move it to (650/2, 650-50/2)
-		o.ground.shape = p.newRectangleShape(width*2,50) --(width, height)
-		o.ground.fixture = p.newFixture(o.ground.body, o.ground.shape)--Attach shape to body
-		o.ground.fixture:setUserData("Ground")
-
-	--Create the Player
-	o.player = {}
-		o.player.body = p.newBody(world, width/2, height/2, "dynamic")
-		o.player.body:setMass(15)
-		o.player.shape = p.newRectangleShape(24,60)
-		o.player.fixture = p.newFixture(o.player.body, o.player.shape) --attach body to shape with a density of one (body, shape, density)
-		o.player.fixture:setRestitution(0) --A small restitution means less bouncing
-		o.player.body:setFixedRotation(true) --no rotating
-		o.player.jumping = false --will help us find out if our player is jumop
-		o.player.fixture:setUserData("Player") --Give our object a name
+	createGround()
+	createPlayer()
 
 	generatePlatforms()
 	--initial graphics setup
@@ -68,8 +80,7 @@ end
 function love.keyreleased(key)
 	if key == "space" then
 		if o.player.jumping == false then
-			o.player.jumping = true
-			o.player.body:applyForce(0,-10000)
+			o.player.body:applyForce(0,-jumpForce)
 		end
 	end
 
@@ -116,10 +127,33 @@ function love.draw()
 	--g.draw( image, o.player.body:getX(), o.player.body:getY())
 	
 	g.draw(image, b:getX(), b:getY(), b:getAngle(), 1, 1, image:getWidth()/2, image:getHeight()/2)
-	for i=1, 6, 1 do
+	for i=1, 15, 1 do
 		g.polygon("fill", o.platforms[i].body:getWorldPoints(o.platforms[i].shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
 	end
 	
 	love.graphics.print(b:getY(),0 ,0 )
+	
+end
+
+
+function beginContact(a, b, coll)
+	if 	a:getUserData() == "Ground" or 
+		b:getUserData()== "Ground" or 
+		a:getUserData() == "Block" or 
+		b:getUserData() == "Block" then
+
+		o.player.jumping = false
+	end
+end
+ 
+function endContact(a, b, coll)
+	o.player.jumping = true
+end
+ 
+function preSolve(a, b, coll)
+ 
+end
+ 
+function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 	
 end
