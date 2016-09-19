@@ -12,7 +12,7 @@ function love.load()
 	p.setMeter(65) --The height of a meter in our world is 64px
 	world = p.newWorld(0,9.81*p.getMeter(),true)--(gravity on the x axis, gravity on the y axis, whether the bodies are allowed to sleep)
 	
-	--image = g.newImage(filename, format)
+	image = g.newImage("robot.png")
 	--body: this is what gets affected by velocity, and it holds the X and Y. It's invisible. 
 	--shape: this is the shape that you see. It's used for mass control, and collision.
 	--fixture: this is what attaches the shape to the body. It's like in those cartoons when someone's 
@@ -59,9 +59,10 @@ function love.update(dt)
 	end
 end
 function love.draw()
-  g.setColor(255, 255, 255) -- set the drawing color to green for the ground
-  g.polygon("fill", o.ground.body:getWorldPoints(o.ground.shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
+	g.setColor(255, 255, 255) -- set the drawing color to green for the ground
+	g.polygon("fill", o.ground.body:getWorldPoints(o.ground.shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
 
-  g.setColor(255, 255, 255) --set the drawing color to red for the ball
-  g.circle("fill", o.ball.body:getX(), o.ball.body:getY(), o.ball.shape:getRadius())
+	g.setColor(255, 255, 255) --set the drawing color to red for the ball
+	--g.circle("fill", o.ball.body:getX(), o.ball.body:getY(), o.ball.shape:getRadius())
+	g.draw( image, o.ball.body:getX(), o.ball.body:getY())
 end
