@@ -9,9 +9,24 @@ o = objects
 
 moveaug = 4
 
+function generatePlatforms()
+	--We will use six platforms
+	o.platforms = {{},{},{},{},{},{}}
+	math.randomseed(os.time())
+
+	for i = 1, 6, 1 do
+		local x = math.random(50,width-50)
+		local dynoWidth = math.random(50, 300)
+		--local y = math.random(50, height-100)
+		o.platforms[i].body = p.newBody(world, x, 750-(i*100), "static")
+		o.platforms[i].shape = p.newRectangleShape(dynoWidth, 30)
+		o.platforms[i].fixture = p.newFixture(o.platforms[i].body, o.platforms[i].shape)
+	end 
+end
+
 function love.load()
 	--Create World
-	p.setMeter(65) --The height of a meter in our world is 64px
+	p.setMeter(64) --The height of a meter in our world is 64px
 	world = p.newWorld(0,9.81*p.getMeter(),true)--(gravity on the x axis, gravity on the y axis, whether the bodies are allowed to sleep)
 	
 	--Set the image for the sprite
@@ -34,10 +49,13 @@ function love.load()
 	--Create the ball
 	o.player = {}
 		o.player.body = p.newBody(world, width/2, height/2, "dynamic")
-		o.player.shape = p.newRectangleShape(63,63)
+		o.player.body:setMass(15)
+		o.player.shape = p.newRectangleShape(24,60)
 		o.player.fixture = p.newFixture(o.player.body, o.player.shape) --attach body to shape with a density of one (body, shape, density)
 		o.player.fixture:setRestitution(0.3) --A small restitution means less bouncing
+		o.player.body:setFixedRotation(true)
 
+	generatePlatforms()
 	--initial graphics setup
 	g.setBackgroundColor(0, 0, 0) --set the background color to a nice blue
 	love.window.setMode(width, height) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
@@ -45,7 +63,7 @@ end
 
 function love.keyreleased(key)
 	if key == "space" then
-		o.player.body:applyForce(0,-30000)
+		o.player.body:applyForce(0,-10000)
 	end
 
 	if key == "escape" then
@@ -88,4 +106,7 @@ function love.draw()
 	--g.draw( image, o.player.body:getX(), o.player.body:getY())
 	local b = o.player.body
 	g.draw(image, b:getX(), b:getY(), b:getAngle(), 1, 1, image:getWidth()/2, image:getHeight()/2)
+	for i=1, 6, 1 do
+		g.polygon("fill", o.platforms[i].body:getWorldPoints(o.platforms[i].shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
+	end
 end
