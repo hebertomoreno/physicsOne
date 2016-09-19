@@ -12,6 +12,7 @@ function love.load()
 	p.setMeter(65) --The height of a meter in our world is 64px
 	world = p.newWorld(0,9.81*p.getMeter(),true)--(gravity on the x axis, gravity on the y axis, whether the bodies are allowed to sleep)
 	
+	--image = g.newImage(filename, format)
 	--body: this is what gets affected by velocity, and it holds the X and Y. It's invisible. 
 	--shape: this is the shape that you see. It's used for mass control, and collision.
 	--fixture: this is what attaches the shape to the body. It's like in those cartoons when someone's 
