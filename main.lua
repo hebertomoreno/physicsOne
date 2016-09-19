@@ -32,7 +32,7 @@ function love.load()
 	o.ball.body = p.newBody(world, width/2, height/2, "dynamic")
 	o.ball.shape = p.newCircleShape(20)--We just declare the radius, because x, y, and the world have already been set by the body
 	o.ball.fixture = p.newFixture(o.ball.body, o.ball.shape) --attach body to shape with a density of one (body, shape, density)
-	o.ball.fixture:setRestitution(0.8) --let the ball bounce
+	o.ball.fixture:setRestitution(0.3) --let the ball bounce
 
 	--initial graphics setup
 	g.setBackgroundColor(0, 0, 0) --set the background color to a nice blue
@@ -64,5 +64,7 @@ function love.draw()
 
 	g.setColor(255, 255, 255) --set the drawing color to red for the ball
 	--g.circle("fill", o.ball.body:getX(), o.ball.body:getY(), o.ball.shape:getRadius())
-	g.draw( image, o.ball.body:getX(), o.ball.body:getY())
+	--g.draw( image, o.ball.body:getX(), o.ball.body:getY())
+	local b = o.ball.body
+	g.draw(image, b:getX(), b:getY(), b:getAngle(), 1, 1, image:getWidth()/2, image:getHeight()/2)
 end
