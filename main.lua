@@ -21,6 +21,7 @@ function generatePlatforms()
 		o.platforms[i].body = p.newBody(world, x, 750-(i*100), "static")
 		o.platforms[i].shape = p.newRectangleShape(dynoWidth, 30)
 		o.platforms[i].fixture = p.newFixture(o.platforms[i].body, o.platforms[i].shape)
+		o.platforms[i].fixture:setUserData("Block")
 	end 
 end
 
@@ -45,6 +46,7 @@ function love.load()
 		o.ground.body = p.newBody(world, width/2, height-50/2, "static")--remember, the shape (the rectangle we create next) anchors to the body from its center, so we have to move it to (650/2, 650-50/2)
 		o.ground.shape = p.newRectangleShape(width*2,50) --(width, height)
 		o.ground.fixture = p.newFixture(o.ground.body, o.ground.shape)--Attach shape to body
+		o.player.fixture:setUserData("Ground")
 
 	--Create the ball
 	o.player = {}
@@ -52,8 +54,10 @@ function love.load()
 		o.player.body:setMass(15)
 		o.player.shape = p.newRectangleShape(24,60)
 		o.player.fixture = p.newFixture(o.player.body, o.player.shape) --attach body to shape with a density of one (body, shape, density)
-		o.player.fixture:setRestitution(0.3) --A small restitution means less bouncing
+		o.player.fixture:setRestitution(0) --A small restitution means less bouncing
 		o.player.body:setFixedRotation(true)
+		o.player.jumping = false
+		o.player.fixture:setUserData("Player")
 
 	generatePlatforms()
 	--initial graphics setup
@@ -63,7 +67,10 @@ end
 
 function love.keyreleased(key)
 	if key == "space" then
-		o.player.body:applyForce(0,-10000)
+		if o.player.jumping == false then
+			o.player.jumping = true
+			o.player.body:applyForce(0,-10000)
+		end
 	end
 
 	if key == "escape" then
@@ -75,16 +82,15 @@ function love.update(dt)
 	local pla = o.player.body
 
 	world:update(dt)--Update the world
-
 	--[[
 	if k.isDown("up") or k.isDown("w") then
 		o.player.body:applyForce(0, -300) 
 	end
 	]]--
 
-	if k.isDown("down") or k.isDown("s") then
+	--[[if k.isDown("down") or k.isDown("s") then
 		o.player.body:applyForce(0, 300)
-	end
+	end]]--
 
 	if k.isDown("left") or k.isDown("a") then
 
@@ -98,15 +104,22 @@ function love.update(dt)
 	end
 end
 function love.draw()
+	local b = o.player.body
+	local playerTranslation = 800 - b:getY() - 300 
+	love.graphics.translate(0, playerTranslation)
+
 	g.setColor(255, 255, 255) -- set the drawing color to green for the ground
 	g.polygon("fill", o.ground.body:getWorldPoints(o.ground.shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
 
 	g.setColor(255, 255, 255) --set the drawing color to red for the ball
 	--g.circle("fill", o.player.body:getX(), o.player.body:getY(), o.player.shape:getRadius())
 	--g.draw( image, o.player.body:getX(), o.player.body:getY())
-	local b = o.player.body
+	
 	g.draw(image, b:getX(), b:getY(), b:getAngle(), 1, 1, image:getWidth()/2, image:getHeight()/2)
 	for i=1, 6, 1 do
 		g.polygon("fill", o.platforms[i].body:getWorldPoints(o.platforms[i].shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
 	end
+	
+	love.graphics.print(b:getY(),0 ,0 )
+	
 end
