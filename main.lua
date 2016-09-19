@@ -41,23 +41,23 @@ function love.load()
 	--Add bodies, shapes and fixture
 	o = {}
 
-	--create the ground
+	--create the Ground
 	o.ground = {}
 		o.ground.body = p.newBody(world, width/2, height-50/2, "static")--remember, the shape (the rectangle we create next) anchors to the body from its center, so we have to move it to (650/2, 650-50/2)
 		o.ground.shape = p.newRectangleShape(width*2,50) --(width, height)
 		o.ground.fixture = p.newFixture(o.ground.body, o.ground.shape)--Attach shape to body
-		o.player.fixture:setUserData("Ground")
+		o.ground.fixture:setUserData("Ground")
 
-	--Create the ball
+	--Create the Player
 	o.player = {}
 		o.player.body = p.newBody(world, width/2, height/2, "dynamic")
 		o.player.body:setMass(15)
 		o.player.shape = p.newRectangleShape(24,60)
 		o.player.fixture = p.newFixture(o.player.body, o.player.shape) --attach body to shape with a density of one (body, shape, density)
 		o.player.fixture:setRestitution(0) --A small restitution means less bouncing
-		o.player.body:setFixedRotation(true)
-		o.player.jumping = false
-		o.player.fixture:setUserData("Player")
+		o.player.body:setFixedRotation(true) --no rotating
+		o.player.jumping = false --will help us find out if our player is jumop
+		o.player.fixture:setUserData("Player") --Give our object a name
 
 	generatePlatforms()
 	--initial graphics setup
