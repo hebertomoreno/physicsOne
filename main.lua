@@ -27,17 +27,16 @@ function love.load()
 
 	--create the ground
 	o.ground = {}
-	o.ground.body = p.newBody(world, width/2, height-50/2, "static")--remember, the shape (the rectangle we create next) anchors to the body from its center, so we have to move it to (650/2, 650-50/2)
-	o.ground.shape = p.newRectangleShape(width*2,50) --(width, height)
-	o.ground.fixture = p.newFixture(o.ground.body, o.ground.shape)--Attach shape to body
+		o.ground.body = p.newBody(world, width/2, height-50/2, "static")--remember, the shape (the rectangle we create next) anchors to the body from its center, so we have to move it to (650/2, 650-50/2)
+		o.ground.shape = p.newRectangleShape(width*2,50) --(width, height)
+		o.ground.fixture = p.newFixture(o.ground.body, o.ground.shape)--Attach shape to body
 
 	--Create the ball
 	o.player = {}
-	o.player.body = p.newBody(world, width/2, height/2, "dynamic")
-	--o.player.shape = p.newCircleShape(20)--We just declare the radius, because x, y, and the world have already been set by the body
-	o.player.shape = p.newRectangleShape(63,63)
-	o.player.fixture = p.newFixture(o.player.body, o.player.shape) --attach body to shape with a density of one (body, shape, density)
-	o.player.fixture:setRestitution(0.3) --let the ball bounce
+		o.player.body = p.newBody(world, width/2, height/2, "dynamic")
+		o.player.shape = p.newRectangleShape(63,63)
+		o.player.fixture = p.newFixture(o.player.body, o.player.shape) --attach body to shape with a density of one (body, shape, density)
+		o.player.fixture:setRestitution(0.3) --A small restitution means less bouncing
 
 	--initial graphics setup
 	g.setBackgroundColor(0, 0, 0) --set the background color to a nice blue
