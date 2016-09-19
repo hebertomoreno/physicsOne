@@ -34,8 +34,8 @@ function love.load()
 	o.ball.fixture:setRestitution(0.8) --let the ball bounce
 
 	--initial graphics setup
-  g.setBackgroundColor(104, 136, 248) --set the background color to a nice blue
-  love.window.setMode(width, height) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
+	g.setBackgroundColor(0, 0, 0) --set the background color to a nice blue
+	love.window.setMode(width, height) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
 end
 
 function love.update(dt)
@@ -58,9 +58,9 @@ function love.update(dt)
 	end
 end
 function love.draw()
-  g.setColor(72, 160, 14) -- set the drawing color to green for the ground
+  g.setColor(255, 255, 255) -- set the drawing color to green for the ground
   g.polygon("fill", o.ground.body:getWorldPoints(o.ground.shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
 
-  g.setColor(193, 47, 14) --set the drawing color to red for the ball
+  g.setColor(255, 255, 255) --set the drawing color to red for the ball
   g.circle("fill", o.ball.body:getX(), o.ball.body:getY(), o.ball.shape:getRadius())
 end
