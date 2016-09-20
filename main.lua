@@ -13,8 +13,7 @@ moveaug = 4
 function love.load()
 	--Create World
 	p.setMeter(64) --The height of a meter in our world is 64px
-	world = p.newWorld(0,9.81*p.getMeter(),true)--(gravity on the x axis, gravity on the y axis, whether the bodies are allowed to sleep)
-		
+	world = p.newWorld(0,9.81*p.getMeter(),false)--(gravity on the x axis, gravity on the y axis, whether the bodies are allowed to sleep)
 		--set the callbacks for collision detection
 		--beginContact gets called when two fixtures start overlapping (two objects collide).
 		--endContact gets called when two fixtures stop overlapping (two objects disconnect).
@@ -30,7 +29,6 @@ function love.load()
 	require "ground"
 	require "player"
 	require "blocks"
-	--generatePlatforms()
 
 	--initial graphics setup
 	g.setBackgroundColor(0, 0, 0) --set the background color to a nice blue
@@ -91,6 +89,7 @@ function love.draw()
 	--g.draw( image, o.player.body:getX(), o.player.body:getY())
 	
 	g.draw(image, b:getX(), b:getY(), b:getAngle(), 1, 1, image:getWidth()/2, image:getHeight()/2)
+	
 	for i=1, 15, 1 do
 		g.polygon("fill", o.platforms[i].body:getWorldPoints(o.platforms[i].shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
 	end
@@ -112,7 +111,7 @@ end
  
 function endContact(a, b, coll)
 	o.player.jumping = true
-	o.player.body:applyForce(0,-10)
+	o.player.body:applyForce(0,-100)
 end
  
 function preSolve(a, b, coll)
@@ -120,5 +119,5 @@ function preSolve(a, b, coll)
 end
  
 function postSolve(a, b, coll, normalimpulse, tangentimpulse)
-	o.player.body:applyForce(0,-10)
+	
 end
